@@ -41,10 +41,12 @@ THIS_IP=$NET_ID
 IPS=$(ip addr | grep inet | awk -F 'inet ' '{print $2}' | awk -F '/' '{print $1}')
 SUFFIX=$(echo ${IPS#*${NET_ID}} | awk -F ' ' '{print $1}')
 THIS_IP+=${SUFFIX}
-[[ "none" == "$VIP" ]] && VIP=${THIS_IP}
-MASTER_IP=$VIP
 PORT=${PORT:-"443"}
-[[ "none" == "$VIP" ]] && PORT="6443" 
+if [[ "none" == "$VIP" ]]; then 
+  VIP=${THIS_IP}
+  PORT="6443" 
+fi
+MASTER_IP=$VIP
 MASTER_PORT=${PORT}
 [ -e /var/env ] || mkdir -p /var/env
 [ -f /var/env/this-ip.env ] || touch /var/env/this-ip.env
