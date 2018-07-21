@@ -2,10 +2,8 @@
 set -e
 show_help () {
 cat << USAGE
-usage: $0 [ -n NET-ID ] [ -r ROLE] [ -a HA-STRATEGY ] [ -v VIRTUAL-IP ] [ -p PORT ]
+usage: $0 [ -n NET-ID ] [ -v VIRTUAL-IP ]
     -n : Specify the network ID. 
-    -r : Specify the role. 
-    -a : Specify the HA strategy, for instance: "nginx" or "vip".
     -v : Specify the virtual IP address.
     -p : Specify the port used by the virtual Kubernetes master server.
          if not specified, use '443' by default. 
@@ -13,15 +11,11 @@ USAGE
 exit 0
 }
 # Get Opts
-while getopts "hn:v:p:a:r:" opt; do # 选项后面的冒号表示该选项需要参数
+while getopts "hn:v:p:" opt; do # 选项后面的冒号表示该选项需要参数
     case "$opt" in
     h)  show_help
         ;;
     n)  NET_ID=$OPTARG # 参数存在$OPTARG中
-        ;;
-    r)  ROLE=$OPTARG
-        ;;
-    a)  HA=$OPTARG
         ;;
     v)  VIP=$OPTARG
         ;;
@@ -43,33 +37,23 @@ fi
 }
 chk_var -n $NET_ID
 chk_var -v $VIP
-chk_var -a $HA
-chk_var -r $ROLE
 THIS_IP=$NET_ID
 IPS=$(ip addr | grep inet | awk -F 'inet ' '{print $2}' | awk -F '/' '{print $1}')
 SUFFIX=$(echo ${IPS#*${NET_ID}} | awk -F ' ' '{print $1}')
 THIS_IP+=${SUFFIX}
+MASTER_IP=$VIP
 PORT=${PORT:-"443"}
-if [[ "nginx" == "$HA" ]]; then 
-  [[ "master" == "${ROLE}" ]] && MASTER_IP=${THIS_IP} 
-  [[ "node" == "${ROLE}" ]] && MASTER_IP="127.0.0.1" 
-  MASTER_PORT="6443" 
-fi
-if [[ "vip" == "$HA" ]]; then 
-  MASTER_PORT=${PORT}
-  MASTER_IP=${VIP} 
-fi
 [ -e /var/env ] || mkdir -p /var/env
 [ -f /var/env/this-ip.env ] || touch /var/env/this-ip.env
 THIS_IP=$(echo "$THIS_IP" | grep -E "^[0-9]*.[0-9]*.[0-9]*.[0-9]*$")
 if [ -n "$THIS_IP" ]; then
-  cat > /var/env/this-ip.env <<EOF
+  cat > /var/env/this-ip.env << EOF
 export NET_ID=$NET_ID
 export THIS_IP=$THIS_IP
 export NODE_IP=$THIS_IP
 export MASTER_IP=$MASTER_IP
 export VIP=$VIP
-export KUBE_APISERVER=https://${MASTER_IP}:${MASTER_PORT}
+export KUBE_APISERVER=https://${MASTER_IP}:${PORT}
 EOF
 else
   echo -e " - check the value of net ID: $NET_ID" | tee /var/env/this-ip.env
