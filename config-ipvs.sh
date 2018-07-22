@@ -11,6 +11,19 @@ for kernel_module in ${ipvs_modules}; do
   /sbin/modprobe ${kernel_module}
 done
 lsmod | grep ip_vs
+MODS=" \
+net.ipv4.ip_forward^=^1
+net.bridge.bridge-nf-call-iptables^=^1
+net.bridge.bridge-nf-call-ip6tables^=^1"
+FILE=/etc/sysctl.conf
+[ -f $FILE ] || touch $FILE
+for MOD in $MODS; do
+  MOD=$(echo $MOD | tr "^" " ")
+  if ! cat $FILE | grep "$MOD"; then
+    echo $MOD >> $FILE
+  fi
+done
+sysctl -p
 EOF
 chmod +x /usr/local/bin/${BIN}
 # mk mod-for-glusterfs.service 
