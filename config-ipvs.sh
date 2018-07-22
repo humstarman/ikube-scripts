@@ -1,6 +1,14 @@
 #!/bin/bash
-
-# mk switch-on-kernel-modules.sh
+# software
+if [ -x "$(command -v yum)" ]; then
+  yum makecache fast
+  yum install -y ipset ipvsadm
+fi
+if [ -x "$(command -v apt-get)" ]; then
+  apt-get update
+  apt-get install -y ipset ipvsadm
+fi
+# kernel modules
 NAME=ipvs-mod
 BIN=${NAME}.sh
 SVC=${NAME}.service
