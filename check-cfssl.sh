@@ -1,7 +1,5 @@
 #!/bin/bash
-
 set -e
-
 # 1 check in PATH
 if [[ -x "$(command -v cfssl)" && -x "$(command -v cfssljson)" && -x "$(command -v cfssl-certinfo)" ]]; then
   # cfssl suite alreay in path
@@ -9,7 +7,6 @@ if [[ -x "$(command -v cfssl)" && -x "$(command -v cfssljson)" && -x "$(command 
   exit 0
 fi
 echo "$(date -d today +'%Y-%m-%d %H:%M:%S') - [WARN] - CFSSL suite not found in PATH !!!"
-
 # 2 check in ./
 if [[ -f cfssl && -f cfssljson && -f cfssl-certinfo ]]; then
   THIS_DIR=$(cd "$(dirname "$0")";pwd)
@@ -19,7 +16,6 @@ if [[ -f cfssl && -f cfssljson && -f cfssl-certinfo ]]; then
   mv cfssl-certinfo /usr/local/bin/cfssl-certinfo
   exit 0
 fi
-
 # 3 download and install CFSSL
 echo "$(date -d today +'%Y-%m-%d %H:%M:%S') - [INFO] - download CFSSL ... "
 CFSSL_VER=R1.2
