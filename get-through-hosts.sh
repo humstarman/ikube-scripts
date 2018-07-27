@@ -1,7 +1,8 @@
 #!/bin/bash
 show_help () {
 cat << USAGE
-usage: $0 [ -i HOST_IP ]
+usage: $0 [ -i HOST-IP ]
+
 use to get through hosts.
 
     -i : Specify the IP address(es) of Host(s). If multiple, set the images in term of csv, 
@@ -16,7 +17,7 @@ while getopts "hi:" opt; do # 选项后面的冒号表示该选项需要参数
     case "$opt" in
     h)  show_help
         ;;
-    s)  HOSTS=$OPTARG
+    i)  HOSTS=$OPTARG
         ;;
     ?)  # 当有不认识的选项的时候arg为?
         echo "unkonw argument"
