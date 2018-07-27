@@ -34,7 +34,7 @@ if [ -z "$2" ]; then
 fi
 }
 chk_var -i $HOSTS
-HOSTS=$(echo ${HOST} | tr "," " ")
+HOSTS=$(echo ${HOSTS} | tr "," " ")
 # 0 set env
 FILE=info.env
 if [ -f ./$FILE ]; then
@@ -88,7 +88,7 @@ getScript $SCRIPTS auto-cp-ssh-id.sh
 if [[ -f ./passwd.log && -n "$(cat ./passwd.log)" ]]; then
   echo "$(date -d today +'%Y-%m-%d %H:%M:%S') - [INFO] - as ./passwd.log existed, automated make ssh connectivity."
   for HOST in $HOSTS; do
-    if ! [ -z "$HOST" ]; then
+    if [ -n "$HOST" ]; then
       ./auto-cp-ssh-id.sh root $PASSWD $HOST
       ssh -t root@${HOST} "if [ ! -x "$(command -v python)" ]; then if [ -x "$(command -v yum)" ]; then yum install -y python; fi; if [ -x "$(command -v apt-get)" ]; then apt-get install -y python; fi; fi"
     fi
