@@ -78,12 +78,12 @@ if false; then
       ./mk-ssh-conn.sh $(cat ./passwd.log)
       # fix python 
       for ip in $MASTER; do
-        ssh -t -t root@$ip "if [ ! -x "$(command -v python)" ]; then if [ -x "$(command -v yum)" ]; then yum install -y python; fi; if [ -x "$(command -v apt-get)" ]; then apt-get install -y python; fi; fi "
+        ssh -tt root@$ip "if [ ! -x "$(command -v python)" ]; then if [ -x "$(command -v yum)" ]; then yum install -y python; fi; if [ -x "$(command -v apt-get)" ]; then apt-get install -y python; fi; fi "
       done
       if $NODE_EXISTENCE; then
         NODE=$(sed s/","/" "/g ./node.csv)
         for ip in $NODE; do
-          ssh -t -t root@$ip "if [ ! -x "$(command -v python)" ]; then if [ -x "$(command -v yum)" ]; then yum install -y python; fi; if [ -x "$(command -v apt-get)" ]; then apt-get install -y python; fi; fi "
+          ssh -tt root@$ip "if [ ! -x "$(command -v python)" ]; then if [ -x "$(command -v yum)" ]; then yum install -y python; fi; if [ -x "$(command -v apt-get)" ]; then apt-get install -y python; fi; fi "
         done
       fi
     else
