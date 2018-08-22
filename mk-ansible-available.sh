@@ -44,8 +44,8 @@ if [ -n "$CSVS" ]; then
   done
 fi
 TMP_STR="${MASTER_GROUP}"
-if $NODE_EXISTENCE; then
-  TMP_STR+=",${NODE_GROUP}"
+if ${ONLY_NODE_EXISTENCE}; then
+  TMP_STR+=",${ONLY_GROUP}"
 fi
 ./mk-ansible-hosts.sh -g ${ANSIBLE_GROUP}:children -i ${TMP_STR} -a $ANSIBLE -o
 echo "$(date -d today +'%Y-%m-%d %H:%M:%S') - [INFO] - /etc/ansible/hosts configured."
