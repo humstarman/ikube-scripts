@@ -48,6 +48,13 @@ if $NODE_EXISTENCE; then
   TMP_STR+=",node"
 fi
 ./mk-ansible-hosts.sh -g ${ANSIBLE_GROUP}:children -i ${TMP_STR} -a $ANSIBLE -o
+if ${REUSE}; then
+  ./mk-ansible-hosts.sh -g ${NODE_GROUP}:children -i ${ANSIBLE_GROUP} -a $ANSIBLE -o
+else
+  if $NODE_EXISTENCE; then
+    ./mk-ansible-hosts.sh -g ${NODE_GROUP}:children -i node -a $ANSIBLE -o
+  fi
+fi
 echo "$(date -d today +'%Y-%m-%d %H:%M:%S') - [INFO] - /etc/ansible/hosts configured."
 echo "$(date -d today +'%Y-%m-%d %H:%M:%S') - [INFO] - check connectivity amongst hosts ..."
 getScript $SCRIPTS auto-cp-ssh-id.sh
