@@ -28,7 +28,7 @@ fi
 for ip in $MASTER; do
   ./auto-cp-ssh-id.sh root $PASSWD $ip 
 done
-if ${ONLY_NODE_EXISTENCE}
+if ${ONLY_NODE_EXISTENCE}; then
   for ip in $ONLY_NODE; do
     ./auto-cp-ssh-id.sh root $PASSWD $ip 
   done
