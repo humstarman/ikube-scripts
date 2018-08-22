@@ -1,5 +1,14 @@
 #!/bin/bash
 PASSWD=$1
+FILE=info.env
+if [ -f ./$FILE ]; then
+  source ./$FILE
+else
+  echo "$(date -d today +'%Y-%m-%d %H:%M:%S') - [ERROR] - no environment file found!" 
+  echo " - exit!"
+  sleep 3
+  exit 1
+fi
 if [ -z "$PASSWD" ]; then
   echo "$(date -d today +'%Y-%m-%d %H:%M:%S') - [ERROR] - need the password." 
 fi
@@ -16,20 +25,11 @@ fi
 if [ ! -f ~/.ssh/id_rsa ]; then
   ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
 fi
-CSVS=$(ls | grep -E ".csv$")
-for CSV in $CSVS; do
-  MEMBERS=$(sed s/","/" "/g $CSV)
-  for MEMBER in $MEMBERS; do
-    [ -z "$MEMBER" ] || ./auto-cp-ssh-id.sh root $PASSWD $MEMBER
-  done
-done
-if false; then
-MASTER=$(sed s/","/" "/g ./master.csv)
 for ip in $MASTER; do
   ./auto-cp-ssh-id.sh root $PASSWD $ip 
 done
-NODE=$(sed s/","/" "/g ./node.csv)
-for ip in $NODE; do
-  ./auto-cp-ssh-id.sh root $PASSWD $ip 
-done
+if ${ONLY_NODE_EXISTENCE}
+  for ip in $ONLY_NODE; do
+    ./auto-cp-ssh-id.sh root $PASSWD $ip 
+  done
 fi
